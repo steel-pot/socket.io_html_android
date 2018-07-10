@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>socket.io 聊天室例子</title>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="css/reset.css"/>
+    <link rel="stylesheet" href="css/bootstrap.css"/>
+    <link rel="stylesheet" href="css/app.css"/>
+	<script src="/js/md5.js"></script>
+</head>
+<body>
+    <div class="wrapper">
+         <div class="content" id="chat">
+             <ul id="chat_conatiner">
+             </ul>
+
+         </div>
+         <div class="action">
+             <textarea ></textarea>
+             <button class="btn btn-success" id="clear">清屏</button>
+             <button class="btn btn-success" id="send">发送</button>
+         </div>
+    </div>
+    <script type="text/javascript" src="js/socket.io.js"></script>
+    <script type="text/javascript">
+
+          
+         
+          var addMessage = function(from, msg){ 
+              var li = document.createElement('li');
+              li.innerHTML = '<span>' + from + '</span>' + ' : ' + msg;
+              document.querySelector('#chat_conatiner').appendChild(li);
+
+              // 设置内容区的滚动条到底部
+              document.querySelector('#chat').scrollTop = document.querySelector('#chat').scrollHeight;
+
+              // 并设置焦点
+              document.querySelector('textarea').focus();
+
+          }
+
+          var send = function(){
+              var ele_msg = document.querySelector('textarea');
+              var msg = ele_msg.value.replace('\r\n', '').trim(); 
+              if(!msg) return;
+              sendMsg(msg);
+              // 添加消息到自己的内容区
+              addMessage('你', msg,true);
+              ele_msg.value = '';
+          }
+
+		  
+		  var account = window.prompt('输入你的用户名!');
+		  var password = window.prompt('输入你的密码!');
+		  password=hex_md5(password);
+		  var myinfo;
+		  var ws = io.connect('/room'); 
+          ws.on('connect', function(){  
+              ws.emit('login', {'account':account,'password':password});
+          });
+		  
+		  ws.on('loginBack', function(rs){  
+			  if(rs.status==1)
+			  {
+				myinfo=rs.userinfo;
+			    addMessage('系统',"登陆成功");  
+				getNums();
+			  }else{
+				alert(rs.info); 
+			  } 
+          }); 
+		  
+		  
+		 ws.on('userChange', function(rs){  
+			  if(rs.isIn==1)
+			  { 
+			    addMessage('系统',rs.userinfo.name+ " 进入了聊天室,当前聊天室用户数量 "+rs.nums); 
+			  }else{
+				addMessage('系统',rs.userinfo.name+ " 离开了聊天室,当前聊天室用户数量 "+rs.nums);  
+			  } 
+          });
+		  
+		  ws.on('getNumsBack', function(rs){   
+				addMessage('系统', "当前在线用户数量 "+rs.nums);  
+          });
+		  function getNums()
+		  {
+			 ws.emit('getNums');
+		  }
+		   
+		  
+		  ws.on('messageComing', function(rs){    
+				switch(rs.fromType)
+				{
+					case "user":
+						addMessage(rs.userinfo.name,rs.content); 
+					break;
+					case "advert":
+						addMessage("公告",rs.content); 
+					break;
+					case "notice":
+						addMessage("提示",rs.content); 
+					break;
+					case "admin":
+						addMessage("管理员",rs.content); 
+					break;
+				} 
+          });  
+		  
+		   var sendMsg = function(msg){
+              ws.emit('sendMsg', {"type":"txt","content":msg});
+          }
+		    
+			ws.on('setChange', function(rs){   
+				addMessage('系统', "配置发生变化: "+rs.key+":"+rs.value);  
+          });
+
+          document.querySelector('textarea').addEventListener('keypress', function(event){
+              if(event.which == 13){
+                  send();
+              }
+          });
+          document.querySelector('textarea').addEventListener('keydown', function(event){
+              if(event.which == 13){
+                  send();
+              }
+          });
+          document.querySelector('#send').addEventListener('click', function(){
+              send();
+          });
+
+          document.querySelector('#clear').addEventListener('click', function(){
+              document.querySelector('#chat_conatiner').innerHTML = '';
+          });
+    </script>
+</body>
+</html>

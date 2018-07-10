@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>数据提交测试</title>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="css/reset.css"/>
+    <link rel="stylesheet" href="css/bootstrap.css"/>
+    <link rel="stylesheet" href="css/app.css"/>
+	<script src="/js/md5.js"></script>
+</head>
+<body>
+<form name="form1" method="post" action="/sendAdvert">
+  <label for="type">消息类别</label>
+  <input type="text" name="type" id="type" value="txt">
+  <label for="content">内容</label>
+  <input type="text" name="content" id="content">
+  <input type="submit" name="button" id="button" value="提交">
+</form>
+
+<form name="form1" method="post" action="/sendAdmin">
+  <label for="type">消息类别</label>
+  <input type="text" name="type" id="type" value="txt">
+  <label for="content">内容</label>
+  <input type="text" name="content" id="content">
+  <input type="submit" name="button" id="button" value="提交">
+</form>
+
+<form name="form1" method="post" action="/sendNotice">
+  <label for="type">消息类别</label>
+  <input type="text" name="type" id="type" value="txt">
+  <label for="content">内容</label>
+  <input type="text" name="content" id="content">
+  <input type="submit" name="button" id="button" value="提交">
+</form>
+
+<form name="form1" method="post" action="/setChange">
+  <label for="type">键</label>
+  <input type="text" name="k" id="type" value="">
+  <label for="content">值</label>
+  <input type="text" name="v" id="content">
+  <input type="submit" name="button" id="button" value="提交">
+</form>
+<form name="form1" method="post" action="/forbidAllUser">
+  <label for="type">1禁言  0解除禁言</label>
+  <input type="text" name="set" id="type" value="1"> 
+  <input type="submit" name="button" id="button" value="提交">
+</form>
+
+<form name="form1" method="post" action="/forbidUser">
+  <label for="type">1禁言  0解除禁言</label>
+  <input type="text" name="set" id="type" value="1"> 
+  <label for="type">socketid</label>
+  <input type="text" name="socketid" id="type" value=""> 
+  <input type="submit" name="button" id="button" value="提交">
+</form>
+
+<form name="form1" method="post" action="/getUserList">  
+  <input type="submit" name="button" id="button" value="提交">
+</form>
+</body>
+</html>
